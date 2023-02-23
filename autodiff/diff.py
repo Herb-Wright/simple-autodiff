@@ -1,3 +1,7 @@
+'''
+This module contains different functions for computing backwards derivatives.
+'''
+
 from numpy import ndarray
 import numpy as np
 from typing import Iterable, Tuple, Union, Callable

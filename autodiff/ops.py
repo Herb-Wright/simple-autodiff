@@ -1,3 +1,6 @@
+'''
+This module contains Different differentiable operations on autodiff Tensors
+'''
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 from tensor import Tensor

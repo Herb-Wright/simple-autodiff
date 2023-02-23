@@ -14,8 +14,8 @@ from tqdm import trange
 from time import sleep
 
 # constants
-M = Tensor(np.array([0.3, 0.1, 0.2, -0.3]))
-B, N, D, SIGMA = -0.3, 2000, 4, 0.05
+M = Tensor(np.array([0.4, 0.1, 0.2, -0.3]))
+B, N, D, SIGMA = -0.2, 2000, 4, 0.1
 
 EPOCHS = 1000
 STEP_SIZE = 0.1

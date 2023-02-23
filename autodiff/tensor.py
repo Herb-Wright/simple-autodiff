@@ -1,3 +1,7 @@
+'''
+This module contains the Tensor class implementation.
+'''
+
 from __future__ import annotations
 import sys, os
 sys.path.append(os.path.dirname(__file__))
@@ -9,6 +13,7 @@ from typing import Union, Iterable, List
 from numpy.typing import ArrayLike
 
 class Tensor:
+	'''Tensor class for autodiff'''
 	def __init__(self, array: ArrayLike):
 		self.value: ndarray = np.array(array)
 		self.gradient_func: Union[callable, None] = None
@@ -145,10 +150,10 @@ class Tensor:
 		return out
 
 	def __str__(self: Tensor):
-		return str(f'Tensor({self.value})')
+		return str(f'Tensor({np.array_str(self.value, precision=8)})')
 	
 	def __repr__(self: Tensor):
-		return str(f'Tensor({self.value})')
+		return str(f'Tensor({np.array_str(self.value, precision=8)})')
 
 	def __neg__(self: Tensor):
 		return (-1) * self

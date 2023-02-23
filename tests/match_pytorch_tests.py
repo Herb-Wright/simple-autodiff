@@ -1,7 +1,7 @@
 import sys, os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import torch
-from torch import Tensor as TorchTensor
+from torch import Tensor
 from autodiff import Tensor, ops
 import numpy as np
 
