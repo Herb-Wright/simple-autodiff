@@ -1,7 +1,8 @@
 from __future__ import annotations
 import sys, os
 sys.path.append(os.path.dirname(__file__))
-from diff import mat_mul_diff, mat_elem_mul_diff, mat_add_diff
+from diff import mat_mul_diff, mat_elem_mul_diff, mat_add_diff, get_unsqueeze_diff, mat_elem_div_diff, power_rule_diff
+from diff import exponential_rule_diff, squeeze_diff, broadcast_diff
 import numpy as np
 from numpy import ndarray
 from typing import Union, Iterable, List
@@ -100,11 +101,27 @@ class Tensor:
 		out.gradient_func = mat_elem_mul_diff
 		return out
 
-	def __div__(left, right) -> Tensor:
-		raise NotImplementedError
+	def __truediv__(left: Tensor, right: Union[Tensor, ndarray, float]) -> Tensor:
+		if type(right) is not Tensor:
+			right = np.array(right) if type(right) is ndarray else np.array([right])
+			out = Tensor(left.value / right)
+		else:
+			out = Tensor(left.value / right.value)
+		out.children.append(left)
+		out.children.append(right)
+		out.gradient_func = mat_elem_div_diff
+		return out
 
-	def __rdiv__(left, right) -> Tensor:
-		raise NotImplementedError
+	def __rtruediv__(right: Tensor, left: Union[Tensor, ndarray, float]) -> Tensor:
+		if type(left) is not Tensor:
+			left = np.array(left) if type(left) is ndarray else np.array([left])
+			out = Tensor(left / right.value)
+		else:
+			out = Tensor(left.value / right.value)
+		out.children.append(left)
+		out.children.append(right)
+		out.gradient_func = mat_elem_div_diff
+		return out
 
 	def __matmul__(left: Tensor, right: Tensor) -> Tensor:
 		out = Tensor(left.value @ right.value)
@@ -114,25 +131,52 @@ class Tensor:
 		return out
 
 	def __pow__(left: Tensor, right: float) -> Tensor:
-		raise NotImplementedError
+		out = Tensor(left.value ** right)
+		out.children.append(left)
+		out.children.append(right)
+		out.gradient_func = power_rule_diff
+		return out
 
-	def __str__(self):
+	def __rpow__(right: Tensor, left: float) -> Tensor:
+		out = Tensor(left ** right.value)
+		out.children.append(left)
+		out.children.append(right)
+		out.gradient_func = exponential_rule_diff
+		return out
+
+	def __str__(self: Tensor):
 		return str(f'Tensor({self.value})')
 	
-	def __repr__(self):
+	def __repr__(self: Tensor):
 		return str(f'Tensor({self.value})')
 
 	def __neg__(self: Tensor):
 		return (-1) * self
 
-	def unsqueeze(self, dim):
-		raise NotImplementedError
+	def unsqueeze(self: Tensor, dim: int) -> Tensor:
+		shape = list(self.value.shape)
+		shape.insert(dim, 1)
+		out = Tensor(self.value.reshape(shape))
+		out.children.append(self)
+		out.gradient_func = get_unsqueeze_diff(dim)
+		return out
 	
-	def squeeze(self, dim):
-		raise NotImplementedError
+	def squeeze(self: Tensor) -> Tensor:
+		out = Tensor(self.value.squeeze())
+		out.children.append(self)
+		out.gradient_func = squeeze_diff
+		return out
+		
 
-	def broadcast_to(self, shape):
-		raise NotImplementedError
+	def broadcast_to(self:Tensor, shape: Iterable[int]) -> Tensor:
+		out = Tensor(np.broadcast_to(self.value, shape))
+		out.children.append(self)
+		out.gradient_func = broadcast_diff
+		return out
+
+	def leafify(self: Tensor) -> None:
+		self.children = []
+		self.gradient_func = None
 
 
 

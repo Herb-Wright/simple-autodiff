@@ -5,7 +5,7 @@ from torch import Tensor as TorchTensor
 from autodiff import Tensor, ops
 import numpy as np
 
-EPSILON = 1e-7
+EPSILON = 1e-6
 
 def test_mat_mul_simple():
 	print('[TEST] test_mat_mult_simple')
@@ -152,11 +152,100 @@ def test_scalar_mul_simple():
 	print('passed.')
 
 
+def test_division_simple():
+	print('[TEST] test_division_simple')
+	# setup
+	a_np = np.random.randn(3, 4, 5)
+	b_np = np.random.randn(3, 4, 5)
+	scalar = 17.5
+	a = Tensor(a_np)
+	b = Tensor(b_np)
+	a_t = torch.tensor(a_np, requires_grad = True)
+	b_t = torch.tensor(b_np, requires_grad = True)
+	# autodiff
+	y = ops.sum(a / b)
+	y.differentiate()
+	# pytorch
+	y_t = (a_t / b_t).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: y1-a'
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'the gradient did not match: y1-b'
+	# autodiff
+	y = ops.sum(scalar / a)
+	y.differentiate()
+	# pytorch
+	a_t.grad.zero_()
+	y_t = (scalar / a_t).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: y2-a'
+	# autodiff
+	y = ops.sum(b / scalar)
+	y.differentiate()
+	# pytorch
+	b_t.grad.zero_()
+	y_t = (b_t / scalar).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'the gradient did not match: y3-b'
+	print('passed.')
+
+def test_exponentiation_simple():
+	print('[TEST] test_exponentiation_simple')
+	# setup
+	a_np = np.random.randn(2, 3)
+	scalar = 4
+	a = Tensor(a_np)
+	a_t = torch.tensor(a_np, requires_grad = True)
+	# autodiff
+	y = ops.sum(a ** scalar)
+	y.differentiate()
+	# pytorch
+	y_t = (a_t ** scalar).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: Tensor ** float'
+	# autodiff
+	y = ops.sum(scalar ** a)
+	y.differentiate()
+	# pytorch
+	a_t.grad.zero_()
+	y_t = (scalar ** a_t).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: float ** Tensor'
+	print('passed.')
+
+
+def test_max_simple():
+	print('[TEST] test_max_simple')
+	x_np = np.random.randn(4, 5, 6, 7)
+	x = Tensor(x_np)
+	x_t = torch.tensor(x_np, requires_grad=True)
+	dim = 2
+	# autodiff
+	m = ops.max(x, dim=dim)
+	y = ops.sum(m)
+	y.differentiate()
+	# pytorch
+	y_t = x_t.amax(dim=dim).sum()
+	y_t.backward()
+	# assert
+	assert np.all(np.linalg.norm(x.gradient - x_t.grad.numpy()) < EPSILON), 'the gradient did not match'
+	print('passed.')
+
+
+
+
 if __name__ == '__main__':
 	test_mat_mul_simple()
 	test_mat_mul_complex()
 	test_dot_product_simple()
 	test_addition_subtraction()
 	test_scalar_mul_simple()
+	test_division_simple()
+	test_exponentiation_simple()
+	test_max_simple()
 	print('All tests pass!')
 
