@@ -24,7 +24,11 @@ def min(tensor: Tensor, dim: Union[None, int, Iterable[int]] = None) -> Tensor:
 	return -1 * max(-1 * tensor, dim=dim)
 
 def maximum(tensor1: Tensor, tensor2: Tensor) -> Tensor:
-	out = Tensor(np.maximum(tensor1, tensor2))
+	if type(tensor1) is not Tensor:
+		tensor1 = Tensor(tensor1)
+	if type(tensor2) is not Tensor:
+		tensor2 = Tensor(tensor2)
+	out = Tensor(np.maximum(tensor1.value, tensor2.value))
 	out.children.append(tensor1)
 	out.children.append(tensor2)
 	out.gradient_func = maximum_diff
