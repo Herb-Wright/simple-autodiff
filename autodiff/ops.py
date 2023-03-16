@@ -31,7 +31,7 @@ def maximum(tensor1: Tensor, tensor2: Tensor) -> Tensor:
 	return out
 
 def minimum(tensor1: Tensor, tensor2: Tensor) -> Tensor:
-	raise NotImplementedError
+	return -1 * maximum(-1 * tensor1, -1 * tensor2)
 
 def mean(tensor: Tensor, dim: Union[None, int, Iterable[int]] = None) -> Tensor:
 	if dim is None:
@@ -43,6 +43,9 @@ def mean(tensor: Tensor, dim: Union[None, int, Iterable[int]] = None) -> Tensor:
 		for d in dim:
 			N += tensor.value.shape[d]
 	return sum(tensor, dim) / N
+
+def relu(tensor: Tensor) -> Tensor:
+	return maximum(tensor, Tensor(0))
 
 def sqrt(tensor: Tensor) -> Tensor:
 	return tensor ** (1 / 2)
