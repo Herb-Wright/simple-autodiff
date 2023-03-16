@@ -128,8 +128,11 @@ class Tensor:
 		out.gradient_func = mat_elem_div_diff
 		return out
 
-	def __matmul__(left: Tensor, right: Tensor) -> Tensor:
-		out = Tensor(left.value @ right.value)
+	def __matmul__(left: Tensor, right: Union[Tensor, ndarray]) -> Tensor:
+		if type(right) is not Tensor:
+			out = Tensor(left.value @ right)
+		else:
+			out = Tensor(left.value @ right.value)
 		out.children.append(left)
 		out.children.append(right)
 		out.gradient_func = mat_mul_diff
