@@ -1,0 +1,30 @@
+
+[build-system]
+requires = ["setuptools >= 61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "simple_autodiff"
+version = "0.1.0"
+dependencies = [
+  "numpy"
+]
+requires-python = ">=3.10"
+authors = [
+  {name = "Herbert Wright", email = "herb.e.wright@gmail.com"},
+]
+maintainers = [
+  {name = "Herbert Wright", email = "herb.e.wright@gmail.com"},
+]
+description = "Simple implementation of automatic differentiation in python using numpy arrays"
+readme = "README.md"
+license = {text = "MIT License"}
+keywords = ["machine learning", "automatic differentiation"]
+classifiers = [
+  "Programming Language :: Python"
+]
+
+[project.urls]
+Homepage = "https://github.com/Herb-Wright/simple-autodiff"
+
+

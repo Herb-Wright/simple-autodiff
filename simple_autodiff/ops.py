@@ -1,12 +1,13 @@
-'''
+"""
 This module contains Different differentiable operations on autodiff Tensors
-'''
-import sys, os
-sys.path.append(os.path.dirname(__file__))
-from tensor import Tensor
-from diff import get_sum_diff_func, get_max_diff_func, maximum_diff
+"""
 from typing import Union, Iterable
+
 import numpy as np
+
+from .tensor import Tensor
+from .diff import get_sum_diff_func, get_max_diff_func, maximum_diff
+
 
 def sum(tensor: Tensor, dim: Union[None, int, Iterable[int]] = None) -> Tensor:
 	out = Tensor(np.sum(tensor.value, axis=dim))

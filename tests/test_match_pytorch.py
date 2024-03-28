@@ -1,14 +1,13 @@
-import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 import torch
-from torch import Tensor
-from autodiff import Tensor, ops
 import numpy as np
+
+from simple_autodiff import Tensor, ops
+
 
 EPSILON = 1e-6
 
 def test_mat_mul_simple():
-	print('[TEST] test_mat_mult_simple')
+	print("[TEST] test_mat_mult_simple")
 	
 	b_np= np.random.randn(2, 4)
 	c_np = np.random.randn(4, 3)
@@ -32,13 +31,13 @@ def test_mat_mul_simple():
 	f_t = (a_t * df_a_t).sum()
 	f_t.backward()
 
-	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'left grad was not correct'
-	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), 'right grad was not correct'
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), "left grad was not correct"
+	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), "right grad was not correct"
 	
-	print('passed.')
+	print("passed.")
 
 def test_mat_mul_complex():
-	print('[TEST] test_mat_mult_complex')
+	print("[TEST] test_mat_mult_complex")
 
 	D1, D2, D3, D4, D5 = 5, 6, 7, 8, 9
 	c_np = np.random.randn(D1, D2, D4, D5)
@@ -68,14 +67,14 @@ def test_mat_mul_complex():
 	f_t = (a_t * df_a_t).sum()
 	f_t.backward()
 
-	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), 'right grad was not correct'
-	assert np.all(np.linalg.norm(d.gradient - d_t.grad.numpy()) < EPSILON), 'left grad was not correct'
-	assert np.all(np.linalg.norm(e.gradient - e_t.grad.numpy()) < EPSILON), 'left grad was not correct'
+	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), "right grad was not correct"
+	assert np.all(np.linalg.norm(d.gradient - d_t.grad.numpy()) < EPSILON), "left grad was not correct"
+	assert np.all(np.linalg.norm(e.gradient - e_t.grad.numpy()) < EPSILON), "left grad was not correct"
 	
-	print('passed.')
+	print("passed.")
 
 def test_dot_product_simple():
-	print('[TEST] test_dot_product_simple')
+	print("[TEST] test_dot_product_simple")
 
 	b_np= np.random.randn(6)
 	c_np = np.random.randn(6)
@@ -99,13 +98,13 @@ def test_dot_product_simple():
 	f_t = (a_t * df_a_t).sum()
 	f_t.backward()
 
-	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'left grad was not correct'
-	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), 'right grad was not correct'
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), "left grad was not correct"
+	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), "right grad was not correct"
 	
-	print('passed.')
+	print("passed.")
 
 def test_addition_subtraction():
-	print('[TEST] test_addition_subtraction')
+	print("[TEST] test_addition_subtraction")
 
 	a_np = np.random.randn(3, 4, 5)
 	b_np = np.random.randn(3, 4, 5)
@@ -128,14 +127,14 @@ def test_addition_subtraction():
 	out = (a_t + b_t - c_t - d_t).sum()
 	out.backward()
 
-	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'one of the grads did not match (a)'
-	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'one of the grads did not match (b)'
-	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), 'one of the grads did not match (c)'
-	assert np.all(np.linalg.norm(d.gradient - d_t.grad.numpy()) < EPSILON), 'one of the grads did not match (d)'
-	print('passed.')
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), "one of the grads did not match (a)"
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), "one of the grads did not match (b)"
+	assert np.all(np.linalg.norm(c.gradient - c_t.grad.numpy()) < EPSILON), "one of the grads did not match (c)"
+	assert np.all(np.linalg.norm(d.gradient - d_t.grad.numpy()) < EPSILON), "one of the grads did not match (d)"
+	print("passed.")
 
 def test_scalar_mul_simple():
-	print('[TEST] test_scalar_mul_simple')
+	print("[TEST] test_scalar_mul_simple")
 	# setup
 	x_np = np.random.randn(3, 4, 5)
 	scalar = 17.5
@@ -148,12 +147,12 @@ def test_scalar_mul_simple():
 	y_t = (scalar * x_t).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(x.gradient - x_t.grad.numpy()) < EPSILON), 'the gradient did not match'
-	print('passed.')
+	assert np.all(np.linalg.norm(x.gradient - x_t.grad.numpy()) < EPSILON), "the gradient did not match"
+	print("passed.")
 
 
 def test_division_simple():
-	print('[TEST] test_division_simple')
+	print("[TEST] test_division_simple")
 	# setup
 	a_np = np.random.randn(3, 4, 5)
 	b_np = np.random.randn(3, 4, 5)
@@ -169,8 +168,8 @@ def test_division_simple():
 	y_t = (a_t / b_t).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: y1-a'
-	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'the gradient did not match: y1-b'
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), "the gradient did not match: y1-a"
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), "the gradient did not match: y1-b"
 	# autodiff
 	y = ops.sum(scalar / a)
 	y.differentiate()
@@ -179,7 +178,7 @@ def test_division_simple():
 	y_t = (scalar / a_t).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: y2-a'
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), "the gradient did not match: y2-a"
 	# autodiff
 	y = ops.sum(b / scalar)
 	y.differentiate()
@@ -188,11 +187,11 @@ def test_division_simple():
 	y_t = (b_t / scalar).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), 'the gradient did not match: y3-b'
-	print('passed.')
+	assert np.all(np.linalg.norm(b.gradient - b_t.grad.numpy()) < EPSILON), "the gradient did not match: y3-b"
+	print("passed.")
 
 def test_exponentiation_simple():
-	print('[TEST] test_exponentiation_simple')
+	print("[TEST] test_exponentiation_simple")
 	# setup
 	a_np = np.random.randn(2, 3)
 	scalar = 4
@@ -205,7 +204,7 @@ def test_exponentiation_simple():
 	y_t = (a_t ** scalar).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: Tensor ** float'
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), "the gradient did not match: Tensor ** float"
 	# autodiff
 	y = ops.sum(scalar ** a)
 	y.differentiate()
@@ -214,12 +213,12 @@ def test_exponentiation_simple():
 	y_t = (scalar ** a_t).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), 'the gradient did not match: float ** Tensor'
-	print('passed.')
+	assert np.all(np.linalg.norm(a.gradient - a_t.grad.numpy()) < EPSILON), "the gradient did not match: float ** Tensor"
+	print("passed.")
 
 
 def test_max_simple():
-	print('[TEST] test_max_simple')
+	print("[TEST] test_max_simple")
 	x_np = np.random.randn(4, 5, 6, 7)
 	x = Tensor(x_np)
 	x_t = torch.tensor(x_np, requires_grad=True)
@@ -232,13 +231,13 @@ def test_max_simple():
 	y_t = x_t.amax(dim=dim).sum()
 	y_t.backward()
 	# assert
-	assert np.all(np.linalg.norm(x.gradient - x_t.grad.numpy()) < EPSILON), 'the gradient did not match'
-	print('passed.')
+	assert np.all(np.linalg.norm(x.gradient - x_t.grad.numpy()) < EPSILON), "the gradient did not match"
+	print("passed.")
 
 
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	test_mat_mul_simple()
 	test_mat_mul_complex()
 	test_dot_product_simple()
@@ -247,5 +246,5 @@ if __name__ == '__main__':
 	test_division_simple()
 	test_exponentiation_simple()
 	test_max_simple()
-	print('All tests pass!')
+	print("All tests pass!")
 
